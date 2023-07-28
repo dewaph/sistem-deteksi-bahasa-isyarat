@@ -10,8 +10,8 @@ def load_lottieurl(url):
     return r.json()
 
 # ---- LOAD ASSETS ----
-lottie_coding = load_lottieurl("https://assets7.lottiefiles.com/packages/lf20_kUtZCR7Zyk.json")
-hello = load_lottieurl("https://assets1.lottiefiles.com/packages/lf20_3vbOcw.json")
+lottie_coding = load_lottieurl("https://lottie.host/160d083e-a377-4a60-b5af-3310a3544375/zemzhLgni6.json")
+hello = load_lottieurl("https://lottie.host/aff1e6dc-1cb7-4979-8616-0ee5b8540c1b/SunicAdA8Q.json")
 
 def app():
     st.markdown("""
@@ -77,7 +77,7 @@ def app():
             st.subheader("Selamat Datang :wave:")
             st.title("Sistem Deteksi Huruf Alfabet Bahasa Isyarat Indonesia")
         with right_column:
-            st_lottie(hello, height=300, key="robot")
+            st_lottie(hello, height=300)
     if 'about' not in st.session_state:
         st.session_state['about'] = False
     if st.button('Lihat Selengkapnya'):
@@ -88,22 +88,18 @@ def app():
             st.write("---")
             left_column, right_column = st.columns(2)
             with left_column:
-                st_lottie(lottie_coding, height=300, key="coding")
+                st_lottie(lottie_coding, height=300)
             with right_column:
                 st.header("Tentang Aplikasi")
                 st.write("##")
                 st.write(
                     """
-                    On my YouTube channel I am creating tutorials for people who:
-                    - are looking for a way to leverage the power of Python in their day-to-day work.
-                    - are struggling with repetitive tasks in Excel and are looking for a way to use Python and VBA.
-                    - want to learn Data Analysis & Data Science to perform meaningful and impactful analyses.
-                    - are working with Excel and found themselves thinking - "there has to be a better way."
-
-                    If this sounds interesting to you, consider subscribing and turning on the notifications, so you don’t miss any content.
+                    Sistem ini dikembangkan dengan menggunakan Machine Learning dengan metode random forest:
+                    - Data gambar yang digunakan berjumlah 5200 yang berisi huruf dari A-Z.
+                    - Sistem ini memiliki akurasi 100% untuk 1 tangan dan 99,84% untuk 2 tangan.
+                    - Sistem ini dapat mendeteksi dan menerjemahkan huruf alfabet bahasa isyarat indonesia ke dalam teks dan suara.
                     """
                 )
-                st.write("[YouTube Channel >](https://youtube.com/c/CodingIsFun)")
-
 
 app()
+

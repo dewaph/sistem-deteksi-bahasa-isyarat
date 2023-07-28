@@ -34,7 +34,12 @@ def run_webcam_detection():
         # Inisialisasi webcam
         cap = cv2.VideoCapture(0)
 
-        run_detection(placeholder, cap)
+        # Initialize the correct answer counter
+        total_correct_answers = 0
+
+        # Placeholder for displaying the total correct answers
+        total_correct_placeholder = st.empty()
+        run_detection(placeholder, cap, total_correct_answers, total_correct_placeholder)
     else:
         st.markdown("Kamera <span style='background:#c90c1f; border-radius: 2px;'>Mati</span>", unsafe_allow_html=True)
 
@@ -42,15 +47,15 @@ def run_webcam_detection():
     #     st.write("kamera menyala")
 
 
-def run_detection(placeholder, cap):
+def run_detection(placeholder, cap, total_correct_answers, total_correct_placeholder):
     mp_hands = mp.solutions.hands
     mp_drawing = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
 
     hands = mp_hands.Hands(static_image_mode=True, max_num_hands=2, min_detection_confidence=0.3)
 
-    model_dict1 = pickle.load(open('./model1.p', 'rb'))
-    model_dict2 = pickle.load(open('./model2.p', 'rb'))
+    model_dict1 = pickle.load(open('./machinelearning/model/model1.p', 'rb'))
+    model_dict2 = pickle.load(open('./machinelearning/model/model2.p', 'rb'))
     model1 = model_dict1['model1']
     model2 = model_dict2['model2']
 
@@ -113,6 +118,9 @@ def run_detection(placeholder, cap):
                 x2 = int(max(x_) * W) - 10
                 y2 = int(max(y_) * H) - 10
 
+                # Initialize message with an empty string
+                message = "Salah"
+
                 if not quiz_answered:
                     prediction1 = model1.predict([np.asarray(data_aux)])
                     predicted_character = labels_dict1[int(prediction1[0])]
@@ -122,10 +130,12 @@ def run_detection(placeholder, cap):
                                 cv2.LINE_AA)
 
                     if predicted_character == quiz_letter:
-                        message = "Selamat Anda Benar!"
                         quiz_answered = True
                         cv2.putText(frame, "Isyarat Tangan Benar", (x1, y1 - 40), cv2.FONT_HERSHEY_SIMPLEX, 1.3,
                                     (0, 255, 0), 3, cv2.LINE_AA)
+                        # Increment the total correct answers counter
+                        total_correct_answers += 1
+
                     else:
                         message = "Masih Salah!"
                         message += "\nSilakan coba lagi."
@@ -148,10 +158,12 @@ def run_detection(placeholder, cap):
                                 cv2.LINE_AA)
 
                     if predicted_character == quiz_letter:
-                        message = "Selamat Anda Benar!"
                         quiz_answered = True
                         cv2.putText(frame, "Isyarat Tangan Benar", (x1, y1 - 40), cv2.FONT_HERSHEY_SIMPLEX, 1.3,
                                     (0, 255, 0), 3, cv2.LINE_AA)
+                        # Increment the total correct answers counter
+                        total_correct_answers += 1
+
                     else:
                         message = "Masih Salah!"
                         message += "\nSilakan coba lagi."
@@ -164,7 +176,7 @@ def run_detection(placeholder, cap):
                 quiz_answered = False
 
             if message != previous_message:
-                st.success(message)
+                st.error(message)
                 previous_message = message
 
         else:
@@ -176,6 +188,9 @@ def run_detection(placeholder, cap):
 
         # Tampilkan video yang diperbarui
         placeholder.image(frame, channels="BGR")
+
+        # Update total correct answers in the fixed position placeholder
+        total_correct_placeholder.text(f"Total Jawaban Benar: {total_correct_answers}")
 
     # Tutup webcam dan stop deteksi
     cap.release()
